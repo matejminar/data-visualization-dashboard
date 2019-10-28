@@ -1,8 +1,8 @@
+import { createContext } from 'react';
 import { observable, computed, action, runInAction } from 'mobx';
-import { LOADING_STATUSES, METRICS_URL } from './constants';
 import Papa from 'papaparse';
 import { map, uniq, uniqBy } from 'lodash-es';
-import { createContext } from 'react';
+import { LOADING_STATUSES, METRICS_URL } from './constants';
 
 interface Metric {
   Date: string;

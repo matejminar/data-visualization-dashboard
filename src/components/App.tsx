@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { Layout, Row, Col } from 'antd';
 import { observer } from 'mobx-react-lite';
-import { Footer } from './components/Footer';
-import { Header } from './components/Header';
-import { Instructions } from './components/Instructions';
-import { Filters } from './components/Filters';
-import { Visualization } from './components/Visualization';
-import Store from './Store';
+import { Footer } from './Footer';
+import { Header } from './Header';
+import { Instructions } from './Instructions';
+import { Filters } from './Filters';
+import { Visualization } from './Visualization';
+import Store from '../Store';
 import 'antd/dist/antd.css';
 
 const App = observer(() => {
