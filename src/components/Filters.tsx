@@ -68,6 +68,9 @@ export const Filters: React.FC<FiltersProps> = ({
             <Option key={item}>{item}</Option>
           ))}
         </Select>
+        <small>
+          This select from UI library is quite slow, did not try to optimize.
+        </small>
       </Item>
 
       <Button
