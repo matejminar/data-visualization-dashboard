@@ -16,6 +16,8 @@
     "date-fns": "^2.6.0",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
+    "mobx": "^5.14.2",
+    "mobx-react": "^6.1.4",
     "numeral": "^2.0.6",
     "papaparse": "^5.1.0",
     "react": "^16.11.0",
