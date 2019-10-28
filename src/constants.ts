@@ -4,5 +4,4 @@ export enum LOADING_STATUSES {
   Error
 }
 
-export const METRICS_URL =
-  'http://adverity-challenge.s3-website-eu-west-1.amazonaws.com/DAMKBAoDBwoDBAkOBAYFCw.csv';
+export const METRICS_URL = '/data.csv'; // original S3 url does not have SSL certificate and therefore throws the mixed content error
