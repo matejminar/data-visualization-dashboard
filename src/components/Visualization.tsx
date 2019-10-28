@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Icon, Card } from 'antd';
 import {
   LineChart,
@@ -11,16 +11,51 @@ import {
   Legend
 } from 'recharts';
 import { format, parse } from 'date-fns';
+import Papa from 'papaparse';
+import { uniqBy } from 'lodash-es';
+import numeral from 'numeral';
 
-const data = [
-  { date: '01.01.2019', clicks: 400, impressions: 2400 },
-  { date: '01.02.2019', clicks: 800, impressions: 2700 },
-  { date: '01.03.2019', clicks: 600, impressions: 3400 }
-];
+interface Statistic {
+  Date: string;
+  Datasource: string;
+  Campaign: string;
+  Clicks: number;
+  Impressions: number;
+}
 
 export const Visualization: React.FC = () => {
+  const [data, setData] = useState<Statistic[]>([]);
+
+  useEffect(() => {
+    Papa.parse('/data.csv', {
+      download: true,
+      header: true,
+      complete: ({ data }) => {
+        const result: Statistic[] = uniqBy(data, 'Date')
+          .filter(statistic => statistic.Date)
+          .map(statistic => {
+            return data
+              .filter(entry => entry.Date === statistic.Date)
+              .reduce((current, next) => {
+                return {
+                  Date: next.Date,
+                  Impressions:
+                    Number(current.Impressions || 0) + Number(next.Impressions),
+                  Clicks: Number(current.Clicks || 0) + Number(next.Clicks)
+                };
+              }, {});
+          });
+        setData(result);
+      }
+    });
+  }, []);
+
   const formatXAxis = (label: string) => {
-    return format(parse(label, 'dd.MM.yyyy', new Date(label)), 'd. MMM.'); // TODO: do we need to think about timezones?
+    return format(parse(label, 'dd.MM.yyyy', new Date()), 'd. MMM.'); // TODO: do we need to think about timezones?
+  };
+
+  const formatYAxis = (label: string) => {
+    return numeral(label).format('0.0a');
   };
 
   return (
@@ -32,32 +67,36 @@ export const Visualization: React.FC = () => {
         </>
       }
     >
-      <ResponsiveContainer width='100%' height={300}>
+      <ResponsiveContainer width='100%' height={600}>
         <LineChart data={data}>
           <Line
             name='Clicks'
             yAxisId='yAxisClicks'
             type='monotone'
-            dataKey='clicks'
+            dataKey='Clicks'
             stroke='#8884d8'
+            dot={false}
           />
           <Line
             name='Impressions'
             yAxisId='yAxisImpressions'
             type='monotone'
-            dataKey='impressions'
+            dataKey='Impressions'
             stroke='#82ca9d'
+            dot={false}
           />
 
           <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
-          <XAxis dataKey='date' tickFormatter={formatXAxis} />
+          <XAxis dataKey='Date' tickFormatter={formatXAxis} />
           <YAxis
+            dataKey='Clicks'
             yAxisId='yAxisClicks'
             label={{ value: 'Clicks', angle: -90, position: 'insideLeft' }}
             orientation='left'
-            dataKey='clicks'
+            tickFormatter={formatYAxis}
           />
           <YAxis
+            dataKey='Impressions'
             yAxisId='yAxisImpressions'
             label={{
               value: 'Impressions',
@@ -65,7 +104,7 @@ export const Visualization: React.FC = () => {
               position: 'insideRight'
             }}
             orientation='right'
-            dataKey='impressions'
+            tickFormatter={formatYAxis}
           />
           <Tooltip />
           <Legend verticalAlign='bottom' height={36} />
